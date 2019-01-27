@@ -7,3 +7,20 @@
     text-align: center;
 }
 
+.tile {
+    background-color: #c3cee0;
+    border-style: solid;
+    border-width: 2px;
+    height: 80px;
+    line-height: 60px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    width: 80px
+}
+.tile:hover {
+    cursor: pointer;
+}
+.tile:active {
+    background-color: #abb6c9
+}
