@@ -13,8 +13,7 @@ class Starter extends React.Component {
     super(props);
     this.shuffledTiles = this.genTiles();
     let tiles = this.shuffledTiles;
-    this.state = { left: false, selectedVal: null, shuffledTiles: tiles };
-    //this.shuffledTiles = this.genTiles(); 
+    this.state = { left: false, exposedLetter: null, exposedTileIndex: null, shuffledTiles: tiles };
   }
 
   genTiles() {
@@ -39,13 +38,72 @@ class Starter extends React.Component {
     alert("hax!");
   }
 
-  tileClick(i, letter) {
-    let tiles = _.slice(this.state.shuffledTiles, 0, this.state.shuffledTiles.length);
+  hideTile(i, letter) {
+    this.setState(function(state, props) {
+      let tiles = _.slice(state.shuffledTiles, 0, state.shuffledTiles.length);
+      tiles[i] = <Tile letter={letter} exposed={false} onClick={() => this.tileClick(i, letter)} />;
+
+      let newState = _.assign({}, state, { shuffledTiles: tiles });
+      return newState;
+    });
+  
+  }
+
+  exposeTile(i, letter) {
+    /*let tiles = _.slice(this.state.shuffledTiles, 0, this.state.shuffledTiles.length);
     tiles[i] = <Tile letter={letter} exposed={true} onClick={() => this.tileClick(i, letter)} />;
 
-    //let tiles = this.shuffledTiles;
-    let newState = _.assign({}, this.state, { shuffledTiles: tiles });
-    this.setState(newState);
+    this.setState(function(state, props) {
+      let newState = _.assign({}, state, { shuffledTiles: tiles });
+      return newState;
+    });*/
+
+    this.setState(function(state, props) {
+      let tiles = _.slice(state.shuffledTiles, 0, state.shuffledTiles.length);
+      tiles[i] = <Tile letter={letter} exposed={true} onClick={() => this.tileClick(i, letter)} />;
+
+      let newState = _.assign({}, state, { shuffledTiles: tiles });
+      return newState;
+    });
+
+  }
+
+  guessTile(i, letter) {
+    this.exposeTile(i, letter);
+
+    // process guess here
+    console.log(this.state);
+    // if not a match, hide tile values
+    if (letter != this.state.exposedLetter) {
+      let exposedInd = this.state.exposedTileIndex;
+      let exposedLetter = this.state.exposedLetter;
+      setTimeout(function() {
+        this.hideTile(exposedInd, exposedLetter);
+        this.hideTile(i, letter);
+      }.bind(this), 1000);     
+    }
+
+    console.log("guess");
+    this.setState(function(state, props) {
+      let newState = _.assign({}, state, { exposedLetter: null, exposedTileIndex: null });
+      return newState;
+    });
+
+  }
+
+  tileClick(i, letter) {
+    if (this.state.exposedLetter == null) {
+      //this.exposeTile(i, letter);
+      this.setState(function(state, props) {
+        let newState = _.assign({}, state, { exposedLetter: letter, exposedTileIndex: i });
+        return newState;
+      });
+
+      console.log("new state..");
+      this.exposeTile(i, letter);
+    } else {
+      this.guessTile(i, letter);
+    }
   }
 
   render() {
