@@ -10,10 +10,15 @@ export default function game_init(root) {
 
 class Starter extends React.Component {
   constructor(props) {
-    super(props);
-    this.shuffledTiles = this.genTiles();
-    let tiles = this.shuffledTiles;
-    this.state = { left: false, exposedLetter: null, exposedTileIndex: null, shuffledTiles: tiles };
+    super(props); 
+     
+    let tiles = this.genTiles();
+    this.state = { exposedLetter: null, exposedTileIndex: null, ignoreClicks: false, numClicks: 0, pairsMatched: 0, shuffledTiles: tiles };
+  }
+
+  resetGame() {
+    let tiles = this.genTiles();
+    this.setState({ exposedLetter: null, exposedTileIndex: null, ignoreClicks: false, numClicks: 0, pairsMatched:0, shuffledTiles: tiles });
   }
 
   genTiles() {
@@ -29,50 +34,48 @@ class Starter extends React.Component {
     return tiles; 
   }
 
-  swap(_ev) {
-    let state1 = _.assign({}, this.state, { left: !this.state.left });
-    this.setState(state1);
+  incrementClickCount() {
+    this.setState((state, props) => (
+      _.assign({}, state, { numClicks: state.numClicks + 1 })));
   }
 
-  hax(_ev) {
-    alert("hax!");
+  incrementMatchCount() {
+    this.setState((state, props) => (
+      _.assign({}, state, { pairsMatched: state.pairsMatched + 1 })));
+  }
+
+  setTileNoOnClick(i, letter) {
+    this.setState(function(state, props) {
+      let tiles = _.slice(state.shuffledTiles, 0, state.shuffledTiles.length);
+      tiles[i] = <Tile letter={letter} exposed={true} onClick={null} />;
+
+      let newState = _.assign({}, state, { shuffledTiles: tiles });
+      return newState;
+    });
+  }
+
+  setTileExposed(i, letter, isExposed) {
+    this.setState(function(state, props) {
+      let tiles = _.slice(state.shuffledTiles, 0, state.shuffledTiles.length);
+      tiles[i] = <Tile letter={letter} exposed={isExposed} onClick={() => this.tileClick(i, letter)} />;
+
+      let newState = _.assign({}, state, { shuffledTiles: tiles });
+      return newState;
+    });
   }
 
   hideTile(i, letter) {
-    this.setState(function(state, props) {
-      let tiles = _.slice(state.shuffledTiles, 0, state.shuffledTiles.length);
-      tiles[i] = <Tile letter={letter} exposed={false} onClick={() => this.tileClick(i, letter)} />;
-
-      let newState = _.assign({}, state, { shuffledTiles: tiles });
-      return newState;
-    });
-  
+    this.setTileExposed(i, letter, false);
   }
 
   exposeTile(i, letter) {
-    /*let tiles = _.slice(this.state.shuffledTiles, 0, this.state.shuffledTiles.length);
-    tiles[i] = <Tile letter={letter} exposed={true} onClick={() => this.tileClick(i, letter)} />;
-
-    this.setState(function(state, props) {
-      let newState = _.assign({}, state, { shuffledTiles: tiles });
-      return newState;
-    });*/
-
-    this.setState(function(state, props) {
-      let tiles = _.slice(state.shuffledTiles, 0, state.shuffledTiles.length);
-      tiles[i] = <Tile letter={letter} exposed={true} onClick={() => this.tileClick(i, letter)} />;
-
-      let newState = _.assign({}, state, { shuffledTiles: tiles });
-      return newState;
-    });
-
+    this.setTileExposed(i, letter, true);
+    this.setTileNoOnClick(i, letter);
   }
 
   guessTile(i, letter) {
     this.exposeTile(i, letter);
 
-    // process guess here
-    console.log(this.state);
     // if not a match, hide tile values
     if (letter != this.state.exposedLetter) {
       let exposedInd = this.state.exposedTileIndex;
@@ -80,10 +83,25 @@ class Starter extends React.Component {
       setTimeout(function() {
         this.hideTile(exposedInd, exposedLetter);
         this.hideTile(i, letter);
+
+        this.setState(function(state, props) {
+        let newState = _.assign({}, state, { ignoreClicks: false });
+          return newState;
+        });
+
       }.bind(this), 1000);     
+
+      this.setState(function(state, props) {
+        let newState = _.assign({}, state, { ignoreClicks: true });
+        return newState;
+      });
+    } else {
+      // match, so remove click events for both tiles
+      this.setTileNoOnClick(i, letter);
+      this.setTileNoOnClick(this.state.exposedTileIndex, this.state.exposedLetter);
+      this.incrementMatchCount();
     }
 
-    console.log("guess");
     this.setState(function(state, props) {
       let newState = _.assign({}, state, { exposedLetter: null, exposedTileIndex: null });
       return newState;
@@ -92,28 +110,25 @@ class Starter extends React.Component {
   }
 
   tileClick(i, letter) {
+    if (this.state.ignoreClicks) {
+      return;
+    }
+ 
     if (this.state.exposedLetter == null) {
-      //this.exposeTile(i, letter);
       this.setState(function(state, props) {
         let newState = _.assign({}, state, { exposedLetter: letter, exposedTileIndex: i });
         return newState;
       });
 
-      console.log("new state..");
       this.exposeTile(i, letter);
     } else {
       this.guessTile(i, letter);
     }
+
+    this.incrementClickCount();
   }
 
   render() {
-    let button = <div className="column" onMouseMove={this.swap.bind(this)}>
-      <p><button onClick={this.hax.bind(this)}>Click Me</button></p>
-    </div>;
-
-    let blank = <div className="column">
-      <p>Nothing here.</p>
-    </div>;
     let tiles = <div className="tiles">
       <div className="row">
         {this.state.shuffledTiles[0]}
@@ -141,22 +156,23 @@ class Starter extends React.Component {
       </div>
     </div>;
 
-    if (this.state.left) {
-      return <div>
-        <div className="row">
-        {button}
-        {blank}
-        </div>
-        
+    return <div>
         {tiles}
+        <div>
+          <br />
+          <div className="row">
+            <div className="column">
+              <button onClick={this.resetGame.bind(this)}>Reset Game</button>
+            </div>
+            <div className="column">
+              <p>Pairs matched: {this.state.pairsMatched}</p>
+            </div>
+            <div className="column">
+              <p>Number of clicks: {this.state.numClicks}</p>
+            </div>
+          </div>
+        </div>
       </div>;
-    }
-    else {
-      return <div className="row">
-        {blank}
-        {button}
-      </div>;
-    }
   }
 }
 

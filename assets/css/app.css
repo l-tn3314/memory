@@ -2,11 +2,6 @@
 
 @import "~milligram/dist/milligram";
 
-.column > p {
-    padding-top: 10ex;
-    text-align: center;
-}
-
 .tile {
     background-color: #c3cee0;
     border-style: solid;
