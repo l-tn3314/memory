@@ -103,9 +103,6 @@ class Starter extends React.Component {
       this.setState((state, props) => (
         _.assign({}, state, { ignoreClicks: true })));
     } else {
-      // match, so remove click events for both tiles
-      //this.setTileNoOnClick(i, letter);
-      //this.setTileNoOnClick(this.state.exposedTileIndex, this.state.exposedLetter);
       this.incrementMatchCount();
     }
 
