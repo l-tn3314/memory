@@ -4,12 +4,6 @@ import _ from 'lodash';
 class Tile extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { exposed: false }
-  }
-
-  exposeTile() {
-    this.setState({exposed: true});
-    console.log('ha');
   }
 
   render() {

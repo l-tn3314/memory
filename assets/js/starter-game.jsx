@@ -13,12 +13,26 @@ class Starter extends React.Component {
     super(props); 
      
     let tiles = this.genTiles();
-    this.state = { exposedLetter: null, exposedTileIndex: null, ignoreClicks: false, numClicks: 0, pairsMatched: 0, shuffledTiles: tiles };
+    this.state = { 
+      exposedLetter: null, 
+      exposedTileIndex: null, 
+      ignoreClicks: false, 
+      numClicks: 0, 
+      pairsMatched: 0, 
+      shuffledTiles: tiles 
+    };
   }
 
   resetGame() {
     let tiles = this.genTiles();
-    this.setState({ exposedLetter: null, exposedTileIndex: null, ignoreClicks: false, numClicks: 0, pairsMatched:0, shuffledTiles: tiles });
+    this.setState({ 
+      exposedLetter: null, 
+      exposedTileIndex: null, 
+      ignoreClicks: false, 
+      numClicks: 0, 
+      pairsMatched: 0, 
+      shuffledTiles: tiles 
+    });
   }
 
   genTiles() {
@@ -49,8 +63,7 @@ class Starter extends React.Component {
       let tiles = _.slice(state.shuffledTiles, 0, state.shuffledTiles.length);
       tiles[i] = <Tile letter={letter} exposed={true} onClick={null} />;
 
-      let newState = _.assign({}, state, { shuffledTiles: tiles });
-      return newState;
+      return _.assign({}, state, { shuffledTiles: tiles });
     });
   }
 
@@ -59,8 +72,7 @@ class Starter extends React.Component {
       let tiles = _.slice(state.shuffledTiles, 0, state.shuffledTiles.length);
       tiles[i] = <Tile letter={letter} exposed={isExposed} onClick={() => this.tileClick(i, letter)} />;
 
-      let newState = _.assign({}, state, { shuffledTiles: tiles });
-      return newState;
+      return _.assign({}, state, { shuffledTiles: tiles });
     });
   }
 
@@ -84,29 +96,21 @@ class Starter extends React.Component {
         this.hideTile(exposedInd, exposedLetter);
         this.hideTile(i, letter);
 
-        this.setState(function(state, props) {
-        let newState = _.assign({}, state, { ignoreClicks: false });
-          return newState;
-        });
-
+        this.setState((state, props) => (
+          _.assign({}, state, { ignoreClicks: false })));
       }.bind(this), 1000);     
 
-      this.setState(function(state, props) {
-        let newState = _.assign({}, state, { ignoreClicks: true });
-        return newState;
-      });
+      this.setState((state, props) => (
+        _.assign({}, state, { ignoreClicks: true })));
     } else {
       // match, so remove click events for both tiles
-      this.setTileNoOnClick(i, letter);
-      this.setTileNoOnClick(this.state.exposedTileIndex, this.state.exposedLetter);
+      //this.setTileNoOnClick(i, letter);
+      //this.setTileNoOnClick(this.state.exposedTileIndex, this.state.exposedLetter);
       this.incrementMatchCount();
     }
 
-    this.setState(function(state, props) {
-      let newState = _.assign({}, state, { exposedLetter: null, exposedTileIndex: null });
-      return newState;
-    });
-
+    this.setState((state, props) => (
+      _.assign({}, state, { exposedLetter: null, exposedTileIndex: null })));
   }
 
   tileClick(i, letter) {
@@ -115,10 +119,8 @@ class Starter extends React.Component {
     }
  
     if (this.state.exposedLetter == null) {
-      this.setState(function(state, props) {
-        let newState = _.assign({}, state, { exposedLetter: letter, exposedTileIndex: i });
-        return newState;
-      });
+      this.setState((state, props) => (
+        _.assign({}, state, { exposedLetter: letter, exposedTileIndex: i })));
 
       this.exposeTile(i, letter);
     } else {
