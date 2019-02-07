@@ -38,15 +38,17 @@ class Starter extends React.Component {
   }
 
   resetGame() {
-    let tiles = this.genTiles();
-    this.setState({ 
-      exposedLetter: null, 
-      exposedTileIndex: null, 
-      ignoreClicks: false, 
-      numClicks: 0, 
-      pairsMatched: 0, 
-      shuffledTiles: tiles 
-    });
+    this.channel.push("reset", {})
+        .receive("ok", (resp) => { this.setState(resp.game); });  
+    //let tiles = this.genTiles();
+    //this.setState({ 
+    //  exposedLetter: null, 
+    //  exposedTileIndex: null, 
+    //  ignoreClicks: false, 
+    //  numClicks: 0, 
+    //  pairsMatched: 0, 
+    //  shuffledTiles: tiles 
+    //});
   }
 
   genTiles() {
@@ -140,13 +142,17 @@ class Starter extends React.Component {
 
     this.incrementClickCount();
   }
+  tileClick(i) {
+    this.channel.push("click", { tile_ind: i })
+        .receive("ok", (resp) => { this.setState(resp.game); });
+  }
 
   render() {
     console.log(this.state);
     let shuffledTiles = [];
     for (let i = 0; i < this.state.shuffled_letters.length; i++) {
       let j = i;
-      shuffledTiles.push(<Tile letter={this.state.shuffled_letters[j]} exposed={this.state.tiles_exposure[j]} />); 
+      shuffledTiles.push(<Tile letter={this.state.shuffled_letters[j]} exposed={this.state.tiles_exposure[j]} onClick={() => { this.tileClick(j); }} />); 
     }
 
     console.log(shuffledTiles);

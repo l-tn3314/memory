@@ -21,16 +21,25 @@ defmodule Memory.Game do
   end
 
   def client_view(game) do
-    game
-  
+    %{
+      num_clicks: game.num_clicks,
+      pairs_matched: game.pairs_matched,
+      shuffled_letters: game.shuffled_letters,
+      tiles_exposure: gen_tiles_exposure(),
+    }  
   end
 
-  def increment_clicks(game) do
+  def click(game, tile_ind) do
+
+    game
+  end
+
+  defp increment_clicks(game) do
     game
     |> Map.put(:num_clicks, game.num_clicks + 1)
   end
 
-  def increment_matches(game) do
+  defp increment_matches(game) do
     game
     |> Map.put(:pairs_matched, game.pairs_matched + 1)
   end

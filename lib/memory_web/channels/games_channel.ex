@@ -15,6 +15,19 @@ defmodule MemoryWeb.GamesChannel do
     end
   end
 
+  def handle_in("reset", payload, socket) do
+    game = Game.new()
+    socket = socket 
+    |> assign(:game, game)
+    {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
+  end
+  def handle_in("click", %{"tile_ind" => tile_ind}, socket) do
+    game = Game.click(socket.assigns[:game], tile_ind)
+    socket = socket
+    |> assign(:game, game)  
+    {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
+  end
+
   defp authorized?(_payload) do
     true
   end
