@@ -80,7 +80,6 @@ defmodule Memory.Game do
   end
 
   defp guess_tile(game, tile_ind) do
-    IO.puts("guess")
     if (Enum.at(game.shuffled_letters, tile_ind) == Enum.at(game.shuffled_letters, game.exposed_tile_ind)) do
       increment_matches(game)
       |> expose_tile(tile_ind)
