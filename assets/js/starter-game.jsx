@@ -30,6 +30,11 @@ class Starter extends React.Component {
   set_view(view) {
     console.log("new view...", view);
     this.setState(view.game);
+    if (view.game.failed_guess) {
+      console.log("prev guess failed");
+      this.hideTiles();
+    }
+
   }
 
   resetGame() {
@@ -42,15 +47,15 @@ class Starter extends React.Component {
         .receive("ok", (resp) => { 
           if (resp.game.failed_guess) {
             console.log("guess failed");
-            setTimeout(function() { this.hideTiles(i); }.bind(this), 1000);
+            setTimeout(function() { this.hideTiles(); }.bind(this), 1000);
           }        
           this.setState(resp.game); 
         });
   }
 
-  hideTiles(i) {
+  hideTiles() {
     console.log("hide tiles...");
-    this.channel.push("hide_tiles", { tile_ind: i })
+    this.channel.push("hide_tiles", {})
         .receive("ok", (resp) => { this.setState(resp.game) });
   }
 

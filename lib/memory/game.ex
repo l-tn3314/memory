@@ -14,6 +14,7 @@ defmodule Memory.Game do
     %{
       exposed_tile_ind: nil,
       failed_guess: false,
+      guess_tile_ind: nil,
       ignore_clicks: false,
       num_clicks: 0,
       pairs_matched: 0,
@@ -61,6 +62,15 @@ defmodule Memory.Game do
     |> hide_tile(game.exposed_tile_ind)
     |> hide_tile(tile_ind)
     |> Map.put(:exposed_tile_ind, nil)
+    |> Map.put(:guess_tile_ind, nil)
+    |> Map.put(:ignore_clicks, false)
+  end
+  def hide_tiles(game) do 
+    game
+    |> hide_tile(game.exposed_tile_ind)
+    |> hide_tile(game.guess_tile_ind)
+    |> Map.put(:exposed_tile_ind, nil)
+    |> Map.put(:guess_tile_ind, nil)
     |> Map.put(:ignore_clicks, false)
   end
 
@@ -93,6 +103,7 @@ defmodule Memory.Game do
     else
       game
       |> expose_tile(tile_ind)
+      |> Map.put(:guess_tile_ind, tile_ind)
       |> Map.put(:ignore_clicks, true)
       |> Map.put(:failed_guess, true)
     end
