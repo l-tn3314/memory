@@ -8,4 +8,9 @@ defmodule MemoryWeb.PageController do
   def game(conn, params) do
     render(conn, "game.html", name: params["name"])
   end
+
+  def join_game(conn, params) do
+    path = "/game/" <> params["params"]["name"]
+    redirect(conn, to: path)
+  end
 end

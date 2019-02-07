@@ -1,6 +1,11 @@
 <div class="row">
   <div class="column">
     <h2>Join a Game</h2>
+    
+    <%= form_for @conn, Routes.page_path(@conn, :index), [as: :params], fn f -> %>
+      <%= text_input f, :name %>
+      <%= submit "Join game!" %>
+    <% end %> 
     <a href="/game/demo">Join demo game</a>
   </div>
 </div>
