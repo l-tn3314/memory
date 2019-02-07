@@ -4,14 +4,16 @@ import _ from 'lodash';
 
 import Tile from './tile.jsx';
 
-export default function game_init(root) {
-  ReactDOM.render(<Starter />, root);
+export default function game_init(root, channel) {
+  ReactDOM.render(<Starter channel={channel} />, root);
 }
 
 class Starter extends React.Component {
   constructor(props) {
     super(props); 
      
+    this.channel = props.channel;
+
     let tiles = this.genTiles();
     this.state = { 
       exposedLetter: null, 
@@ -19,8 +21,20 @@ class Starter extends React.Component {
       ignoreClicks: false, 
       numClicks: 0, 
       pairsMatched: 0, 
-      shuffledTiles: tiles 
+      shuffledTiles: tiles,
+      shuffled_letters: Array(16).fill("Z"),
+      tiles_exposure: Array(16).fill(false),  
     };
+
+    this.channel
+        .join()
+        .receive("ok", this.set_view.bind(this))
+        .receive("error", resp => { console.log("Unable to join", resp); });
+  }
+
+  set_view(view) {
+    console.log("new view...", view);
+    this.setState(view.game);
   }
 
   resetGame() {
@@ -128,30 +142,39 @@ class Starter extends React.Component {
   }
 
   render() {
+    console.log(this.state);
+    let shuffledTiles = [];
+    for (let i = 0; i < this.state.shuffled_letters.length; i++) {
+      let j = i;
+      shuffledTiles.push(<Tile letter={this.state.shuffled_letters[j]} exposed={this.state.tiles_exposure[j]} />); 
+    }
+
+    console.log(shuffledTiles);
+  
     let tiles = <div className="tiles">
       <div className="row">
-        {this.state.shuffledTiles[0]}
-        {this.state.shuffledTiles[1]}
-        {this.state.shuffledTiles[2]}
-        {this.state.shuffledTiles[3]}
+        {shuffledTiles[0]}
+        {shuffledTiles[1]}
+        {shuffledTiles[2]}
+        {shuffledTiles[3]}
       </div>
       <div className="row">
-        {this.state.shuffledTiles[4]}
-        {this.state.shuffledTiles[5]}
-        {this.state.shuffledTiles[6]}
-        {this.state.shuffledTiles[7]}
+        {shuffledTiles[4]}
+        {shuffledTiles[5]}
+        {shuffledTiles[6]}
+        {shuffledTiles[7]}
       </div>
       <div className="row">
-        {this.state.shuffledTiles[8]}
-        {this.state.shuffledTiles[9]}
-        {this.state.shuffledTiles[10]}
-        {this.state.shuffledTiles[11]}
+        {shuffledTiles[8]}
+        {shuffledTiles[9]}
+        {shuffledTiles[10]}
+        {shuffledTiles[11]}
       </div>
       <div className="row">
-        {this.state.shuffledTiles[12]}
-        {this.state.shuffledTiles[13]}
-        {this.state.shuffledTiles[14]}
-        {this.state.shuffledTiles[15]}
+        {shuffledTiles[12]}
+        {shuffledTiles[13]}
+        {shuffledTiles[14]}
+        {shuffledTiles[15]}
       </div>
     </div>;
 
@@ -164,10 +187,10 @@ class Starter extends React.Component {
               <button onClick={this.resetGame.bind(this)}>Reset Game</button>
             </div>
             <div className="column">
-              <p>Pairs matched: {this.state.pairsMatched}</p>
+              <p>Pairs matched: {this.state.pairs_matched}</p>
             </div>
             <div className="column">
-              <p>Number of clicks: {this.state.numClicks}</p>
+              <p>Number of clicks: {this.state.num_clicks}</p>
             </div>
           </div>
         </div>

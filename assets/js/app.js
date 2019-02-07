@@ -19,10 +19,12 @@ import $ from "jquery";
 import socket from "./socket";
 import game_init from "./starter-game";
 
-let channel = socket.channel("games:default", {});
+let channel = socket.channel("games:" + window.gameName, {});
 
 $(() => {
   let root = $('#root')[0];
-  game_init(root);
+  if (root) {
+    game_init(root, channel);
+  }
 });
 
