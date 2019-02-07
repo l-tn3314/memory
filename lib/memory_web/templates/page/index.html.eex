@@ -6,6 +6,5 @@
       <%= text_input f, :name %>
       <%= submit "Join game!" %>
     <% end %> 
-    <a href="/game/demo">Join demo game</a>
   </div>
 </div>

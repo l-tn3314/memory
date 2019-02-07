@@ -28,10 +28,8 @@ class Starter extends React.Component {
   }
 
   set_view(view) {
-    console.log("new view...", view);
     this.setState(view.game);
     if (view.game.failed_guess) {
-      console.log("prev guess failed");
       this.hideTiles();
     }
 
@@ -46,7 +44,6 @@ class Starter extends React.Component {
     this.channel.push("click", { tile_ind: i })
         .receive("ok", (resp) => { 
           if (resp.game.failed_guess) {
-            console.log("guess failed");
             setTimeout(function() { this.hideTiles(); }.bind(this), 1000);
           }        
           this.setState(resp.game); 
@@ -54,13 +51,11 @@ class Starter extends React.Component {
   }
 
   hideTiles() {
-    console.log("hide tiles...");
     this.channel.push("hide_tiles", {})
         .receive("ok", (resp) => { this.setState(resp.game) });
   }
 
   render() {
-    console.log(this.state);
     let shuffledTiles = [];
     for (let i = 0; i < this.state.shuffled_letters.length; i++) {
       let j = i;

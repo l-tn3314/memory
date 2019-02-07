@@ -35,7 +35,7 @@ defmodule MemoryWeb.GamesChannel do
   end
   def handle_in("hide_tiles", payload, socket) do
     name = socket.assigns[:name]
-    game = Game.hide_tiles(socket.assigns[:game]) #, tile_ind)
+    game = Game.hide_tiles(socket.assigns[:game]) 
     socket = socket
     |> assign(:game, game)
     BackupAgent.put(name, game)

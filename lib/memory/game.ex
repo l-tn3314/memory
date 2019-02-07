@@ -34,7 +34,6 @@ defmodule Memory.Game do
   end
 
   def click(game, tile_ind) do
-    IO.puts("clicking...")
     cond do
       game.ignore_clicks -> 
         game
@@ -55,16 +54,7 @@ defmodule Memory.Game do
     end
   end
   
-  # set tile_exposure to false for game.tile_ind and tile_ind, and allow clicks
-  def hide_tiles(game, tile_ind) do
-    IO.puts("flip tile")
-    game
-    |> hide_tile(game.exposed_tile_ind)
-    |> hide_tile(tile_ind)
-    |> Map.put(:exposed_tile_ind, nil)
-    |> Map.put(:guess_tile_ind, nil)
-    |> Map.put(:ignore_clicks, false)
-  end
+  # set tile_exposure to false for game.exposed_tile_ind and game.guess_tile_ind, and allow clicks
   def hide_tiles(game) do 
     game
     |> hide_tile(game.exposed_tile_ind)
@@ -75,13 +65,10 @@ defmodule Memory.Game do
   end
 
   defp hide_tile(game, tile_ind) do
-    IO.puts("hide")
-    IO.puts(tile_ind)
     game
     |> Map.put(:tiles_exposure, List.replace_at(game.tiles_exposure, tile_ind, false))
   end
   defp expose_tile(game, tile_ind) do
-    IO.puts("expose")
     game = 
       if (game.exposed_tile_ind == nil) do
         game |> Map.put(:exposed_tile_ind, tile_ind)
@@ -90,7 +77,6 @@ defmodule Memory.Game do
     end
     game  
     |> Map.put(:tiles_exposure, List.replace_at(game.tiles_exposure, tile_ind, true))
-#    |> Map.put(:exposed_tile_ind, tile_ind)
   end
 
   defp guess_tile(game, tile_ind) do
