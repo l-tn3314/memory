@@ -24,7 +24,13 @@ defmodule MemoryWeb.GamesChannel do
   def handle_in("click", %{"tile_ind" => tile_ind}, socket) do
     game = Game.click(socket.assigns[:game], tile_ind)
     socket = socket
-    |> assign(:game, game)  
+    |> assign(:game, game)
+    {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
+  end
+  def handle_in("hide_tiles", %{"tile_ind" => tile_ind}, socket) do
+    game = Game.hide_tiles(socket.assigns[:game], tile_ind)
+    socket = socket
+    |> assign(:game, game)
     {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
   end
 
