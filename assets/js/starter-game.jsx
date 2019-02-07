@@ -2,10 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
-import Tile from './tile.jsx';
-
 export default function game_init(root, channel) {
   ReactDOM.render(<Starter channel={channel} />, root);
+}
+
+const Tile = function(props) {
+  return <div className="tile" onClick={props.onClick}>
+      {props.exposed && props.letter}  
+    </div>;
 }
 
 class Starter extends React.Component {
